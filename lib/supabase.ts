@@ -26,17 +26,21 @@
 import { createClient } from '@supabase/supabase-js'
 import type { Scan, AnalysisReport } from '@/types'
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
+// Lazy getters — avoid build-time errors when env vars aren't present
+function getSupabase() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+}
 
-// Public client (browser-safe)
-export const supabase = createClient(supabaseUrl, supabaseAnonKey)
-
-// Server-only admin client (bypasses RLS)
-export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-  auth: { persistSession: false },
-})
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!,
+    { auth: { persistSession: false } }
+  )
+}
 
 export async function createScan({
   supplementsText,
@@ -51,7 +55,7 @@ export async function createScan({
   stripeSessionId?: string | null
   paid: boolean
 }): Promise<Scan> {
-  const { data, error } = await supabaseAdmin
+  const { data, error } = await getSupabaseAdmin()
     .from('scans')
     .insert({
       supplements_text: supplementsText,
@@ -68,7 +72,7 @@ export async function createScan({
 }
 
 export async function getScanById(id: string): Promise<Scan | null> {
-  const { data, error } = await supabase
+  const { data, error } = await getSupabase()
     .from('scans')
     .select('*')
     .eq('id', id)
@@ -79,7 +83,7 @@ export async function getScanById(id: string): Promise<Scan | null> {
 }
 
 export async function markScanPaid(stripeSessionId: string): Promise<void> {
-  const { error } = await supabaseAdmin
+  const { error } = await getSupabaseAdmin()
     .from('scans')
     .update({ paid: true })
     .eq('stripe_session_id', stripeSessionId)
