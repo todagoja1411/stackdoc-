@@ -45,9 +45,11 @@ export async function extractSupplementsFromImage(imageBase64: string): Promise<
 export async function analyzeStack({
   supplements,
   goal,
+  mode = 'analyze',
 }: {
   supplements: string
   goal: string
+  mode?: 'analyze' | 'recommend'
 }): Promise<AnalysisReport> {
   const response = await client.messages.create({
     model: MODEL,
@@ -55,7 +57,7 @@ export async function analyzeStack({
     messages: [
       {
         role: 'user',
-        content: buildAnalysisPrompt({ supplements, goal }),
+        content: buildAnalysisPrompt({ supplements, goal, mode }),
       },
     ],
   })

@@ -19,20 +19,35 @@ Magnesium Glycinate - 400mg`
 export function buildAnalysisPrompt({
   supplements,
   goal,
+  mode = 'analyze',
 }: {
   supplements: string
   goal: string
+  mode?: 'analyze' | 'recommend'
 }): string {
-  return `You are StackDoc, an expert supplement stack analyzer with deep knowledge of sports science, pharmacology, and nutrition research. You provide evidence-based, accurate, and practical supplement analysis.
+  const isRecommend = mode === 'recommend'
 
-## Supplement Stack to Analyze
+  const taskSection = isRecommend
+    ? `## User's Request
+${supplements}
+
+## Target Goal
+${goal}
+
+## Your Task
+The user doesn't have a stack yet — they described what they want to achieve. Build the IDEAL supplement stack for their goal and request. Recommend 4–7 well-evidenced supplements that form a cohesive, effective stack. Then analyze that recommended stack as if it were already their stack.`
+    : `## Supplement Stack to Analyze
 ${supplements}
 
 ## User's Health Goal
 ${goal}
 
 ## Your Task
-Analyze this supplement stack comprehensively and return a structured JSON report. Be specific, accurate, and evidence-based. Use plain language that a non-expert can understand.
+Analyze this supplement stack comprehensively and return a structured JSON report. Be specific, accurate, and evidence-based. Use plain language that a non-expert can understand.`
+
+  return `You are StackDoc, an expert supplement stack analyzer with deep knowledge of sports science, pharmacology, and nutrition research. You provide evidence-based, accurate, and practical supplement analysis.
+
+${taskSection}
 
 ## Required JSON Output Format
 Return ONLY valid JSON wrapped in \`\`\`json code blocks. Follow this exact schema:

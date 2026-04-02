@@ -38,11 +38,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: validation.error }, { status: 400 })
   }
 
-  const { supplements, imageBase64, goal, sessionId } = body as {
+  const { supplements, imageBase64, goal, sessionId, mode } = body as {
     supplements?: string
     imageBase64?: string
     goal: string
     sessionId?: string
+    mode?: 'analyze' | 'recommend'
   }
 
   try {
@@ -82,7 +83,7 @@ export async function POST(req: NextRequest) {
     }
 
     // 6. Run AI analysis
-    const report = await analyzeStack({ supplements: supplementsText, goal })
+    const report = await analyzeStack({ supplements: supplementsText, goal, mode: mode ?? 'analyze' })
 
     // 7. Save to Supabase (text only, never image data)
     const scan = await createScan({

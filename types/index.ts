@@ -59,4 +59,5 @@ export interface PendingScanData {
   supplements?: string
   imageBase64?: string
   goal: Goal
+  mode?: 'analyze' | 'recommend'
 }

@@ -21,3 +21,5 @@ public/workbox-*.js
 # misc
 .DS_Store
 *.pem
+
+.vercel
