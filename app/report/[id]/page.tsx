@@ -7,15 +7,13 @@ import SupplementCard from '@/components/report/SupplementCard'
 import InteractionMatrix from '@/components/report/InteractionMatrix'
 import TimingGuide from '@/components/report/TimingGuide'
 import GoalAlignment from '@/components/report/GoalAlignment'
+import ReportActions from '@/components/report/ReportActions'
 import {
   FlaskConical,
   ChevronRight,
-  Download,
-  Share2,
   AlertTriangle,
   Layers,
   ListChecks,
-  Lock,
 } from 'lucide-react'
 
 interface Props {
@@ -62,38 +60,7 @@ export default async function ReportPage({ params }: Props) {
           </div>
 
           {/* Action buttons */}
-          <div className="flex gap-3 mt-4 no-print">
-            {scan.paid ? (
-              <a
-                href={`/api/report/pdf?id=${scan.id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 h-9 px-4 bg-[#111111] border border-[#1f1f1f] text-sm text-gray-300 rounded-xl hover:text-white hover:border-[#2a2a2a] transition-colors"
-              >
-                <Download className="w-4 h-4" />
-                Download PDF
-              </a>
-            ) : (
-              <Link
-                href="/scan"
-                className="flex items-center gap-2 h-9 px-4 bg-[#111111] border border-[#1f1f1f] text-sm text-gray-600 rounded-xl cursor-pointer hover:border-brand-500/30 hover:text-brand-400 transition-colors group"
-                title="Upgrade to Pro to download PDF"
-              >
-                <Lock className="w-3.5 h-3.5" />
-                Download PDF
-                <span className="text-xs bg-brand-500/10 text-brand-400 border border-brand-500/20 px-1.5 py-0.5 rounded-full group-hover:bg-brand-500/20">
-                  Pro
-                </span>
-              </Link>
-            )}
-            <button
-              onClick={() => typeof navigator !== 'undefined' && navigator.clipboard?.writeText(window.location.href)}
-              className="flex items-center gap-2 h-9 px-4 bg-[#111111] border border-[#1f1f1f] text-sm text-gray-300 rounded-xl hover:text-white hover:border-[#2a2a2a] transition-colors"
-            >
-              <Share2 className="w-4 h-4" />
-              Share
-            </button>
-          </div>
+          <ReportActions scanId={scan.id} paid={scan.paid} />
         </div>
 
         {/* Supplements */}
