@@ -72,7 +72,7 @@ export async function createScan({
 }
 
 export async function getScanById(id: string): Promise<Scan | null> {
-  const { data, error } = await getSupabase()
+  const { data, error } = await getSupabaseAdmin()
     .from('scans')
     .select('*')
     .eq('id', id)
