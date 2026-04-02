@@ -97,6 +97,7 @@ export async function POST(req: NextRequest) {
   } catch (err: unknown) {
     // Never expose internal errors to the client
     console.error('[/api/analyze]', err)
-    return NextResponse.json({ error: safeErrorMessage(err) }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
 }
